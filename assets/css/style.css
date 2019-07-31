@@ -141,4 +141,21 @@ body, html {
 #addTrainSubmitBtn:hover, .removeBTN:hover {
     border: 2px solid rgba(255,255,255,1.0);
     color: rgba(255,255,255,1.0);
+
+.jobsDiv {
+    padding: 20px;
+    margin: 10px;
+}
+
+p {
+    padding: 10px;
+}
+
+#jobsBox {
+    margin-bottom: 20px;
+    float: left;
+}
+
+.applyBtn {
+    margin: 20px;
 }
