@@ -1,15 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
 
 <head>
-    <title> Search Job Advancement </title>
 
-    <link type="stylesheet" href="./assets/css/reset.css">
-    <link type="stylesheet" href="./assets/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="./assets/javascript/app.js"></script>
+    <title>Job Search Advancement v1.0</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="./assets/images/favicon.ico">
+    <link rel="prefetch" href="https://fonts.googleapis.com/css?family=Roboto&display=swap" as="style">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <link rel="stylesheet" href="./assets/css/reset.css" type="text/css">
+    <link rel="stylesheet" href="./assets/css/datatables.css">
+    <link rel="stylesheet" href="./assets/css/style.css" type="text/css">
+
 </head>
+
+<body>
+
+    <div id="title">Job Search Advancement</div>
+
+    <div id="scheduleTBLWrapper">
+        <div id="schedule">Schedule</div>
+        <table id="scheduleTBL" class="cell-border hover"></table>
+    </div>
+
+    <div id="addTrain">Add Train</div>
+
+    <form id="addTrainForm">
+        <input id="trainNameInput" class="form-control" type="text" placeholder="Train Name">
+        <input id="destinationInput" class="form-control" type="text" placeholder="Destination">
+        <input id="firstTimeInput" class="form-control" type="text" placeholder="First Train Time (HH:mm - military time)">
+        <input id="frequencyInput" class="form-control" type="text" placeholder="Frequency (min)">
+        <div id="addTrainSubmitBox">
+            <button id="addTrainSubmitBtn" type="submit">Submit</button>
+        </div>
+    </form> 
+
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
+    <script src="./assets/javascript/datatables.js"></script>
+    <script src="./assets/javascript/moment.js"></script>
+    <script src="./assets/javascript/Utility.js"></script>
+    <script src="./assets/javascript/Model.js"></script>
+    <script src="./assets/javascript/ViewController.js"></script>
+    <script src="./assets/javascript/TrainScheduler.js"></script>
+
+    <script>
+        $(document).ready(() => {
+
+            let launcher = new TrainScheduler();
+
+            launcher.startProgram();
+        });
+    </script>
+
+</body>
 
 </html>

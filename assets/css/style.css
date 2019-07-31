@@ -1,0 +1,144 @@
+* {
+    box-sizing: border-box;
+    cursor: default;
+}
+
+body, html {
+    background: rgb(18, 18, 18);
+    color: rgb(240,240,240);
+    font-family: 'Roboto', sans-serif;
+    font-size: 12pt;
+    height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+    /* overflow-y: hidden; */
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+#title {
+    font-size: 36pt;
+    font-weight: 900;
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+#scheduleTBLWrapper {
+    margin: 50px auto 0px auto;
+    width: 80%;
+}
+
+#schedule {
+    font-size: 18pt;
+    position: relative;
+    text-align: center;
+    top: 30px;
+}
+
+#scheduleTBL_length, #scheduleTBL_filter {
+    color: rgb(240,240,240);
+}
+
+#scheduleTBL_length select, #scheduleTBL_filter input {
+    background: rgb(32, 32, 32);
+    border: 3px solid rgba(240,240,240,1.0);
+    border-radius: 10px;
+    color: rgb(240,240,240);
+    font-family: 'Roboto', sans-serif;
+    font-size: 12pt;
+    height: 36px;
+    outline: none;
+    padding-left: 10px;
+    width: 225px;
+}
+
+#scheduleTBL_length select {
+    margin-left: 10px;
+    padding-left: 0px;
+    width: 55px;
+}
+
+#scheduleTBL {
+    border-radius: 5px;
+    border: 3px solid rgb(240,240,240);
+    position: relative;
+    top: 20px;
+}
+
+#scheduleTBL thead {
+    background: rgb(64,64,64);
+    width: 100%;
+}
+
+#scheduleTBL .odd {
+    background: rgb(32, 32, 32);
+}
+
+#scheduleTBL .even {
+    background: rgb(40, 40, 40);
+}
+
+#scheduleTBL_paginate {
+    position: relative;
+    top: 40px;
+}
+
+#scheduleTBL_paginate a {
+    border-radius: 5px;
+    border: 2px solid rgb(240,240,240);
+    font-family: 'Roboto', sans-serif;
+    font-size: 12pt;
+    font-weight: 700;
+}
+
+#addTrain {
+    font-size: 17pt;
+    position: relative;
+    text-align: center;
+    top: 72px;
+}
+
+#addTrainForm {
+    background: rgb(64,64,64);
+    border: 3px solid rgba(240,240,240,1.0);
+    border-radius: 10px;
+    margin: 100px auto 50px auto;
+    max-width: 400px;
+    min-width: 310px;
+}
+
+#trainNameInput, #destinationInput, #firstTimeInput, #frequencyInput {
+    background: rgb(18, 18, 18);
+    border: 2px solid rgb(240,240,240);
+    border-radius: 5px;
+    color: rgb(240,240,240);
+    display: block;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12pt;
+    height: 36px;
+    margin: 30px auto 30px auto;
+    outline: none;
+    padding-left: 10px;
+    width: 90%;
+}
+
+#addTrainSubmitBox {
+    height: 36px;
+    margin: 30px auto 30px auto;
+    width: 90%;
+}
+
+#addTrainSubmitBtn, .removeBTN {
+    background: rgb(18, 18, 18);
+    border: 2px solid rgba(240,240,240,0.75);
+    border-radius: 10px;
+    color: rgba(255,255,255,1.0);
+    outline: none;
+    padding: 9px 10px 8px 10px;
+}
+
+#addTrainSubmitBtn:hover, .removeBTN:hover {
+    border: 2px solid rgba(255,255,255,1.0);
+    color: rgba(255,255,255,1.0);
+}
