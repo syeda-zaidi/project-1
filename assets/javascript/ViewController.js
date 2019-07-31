@@ -1,5 +1,5 @@
 "use strict";
-/* global Model, Utility, moment, Datatable */
+/* global Model, Utility */
 
 class ViewController {
 
@@ -7,133 +7,174 @@ class ViewController {
 
         this._model = new Model();
 
-        this._scheduleTBL = $("#scheduleTBL");
+        this._jobResultsTBL = $("#jobResultsTBL");
 
         // @ts-ignore
-        this._schedule = this._scheduleTBL.DataTable({
+        this._jobResults = this._jobResultsTBL.DataTable({
 
             "info": false,
             "pagingType": "numbers",
             columns: [
-                { title: "Train Name" },
-                { title: "Destination" },
-                { title: "Frequency (min)" },
-                { title: "Next Arrival" },
-                { title: "Time To Arrival" },
-                { title: "Remove" }
+                { title: "Job Title" },
+                { title: "Location" },
+                { title: "Company" },
+                { title: "Salary" },
+                { title: "Type" },
+                { title: "Source" },
+                { title: "Snippet" },
+                { title: "Updated" },
+                { title: "Link" }
             ]
         });
 
-        this._trainNameInput = $("#trainNameInput");
-        this._destinationInput = $("#destinationInput");
-        this._firstTimeInput = $("#firstTimeInput");
-        this._frequencyInput = $("#frequencyInput");
-        this._addTrainSubmitBtn = $("#addTrainSubmitBtn");
+        this._jobTitleInput = $("#jobTitleInput");
+        this._jobLocationInput = $("#jobLocationInput");
+        this._jobRadiusInput = $("#jobRadiusInput");
+        this._jobSalaryInput = $("#jobSalaryInput");
+        this._searchJobsSubmitBtn = $("#searchJobsSubmitBtn");
 
         this._tablePollFrequencyMS = 1000;
         this._isTablePollStarted = false;
 
         this.assignSubmitBtnListener();
 
-        this.updateSchedulePoll(this._tablePollFrequencyMS);
+        // this.updateSchedulePoll(this._tablePollFrequencyMS);
     }
 
     assignSubmitBtnListener() {
 
-        this._addTrainSubmitBtn.click((event) => {
+        this._searchJobsSubmitBtn.click((event) => {
 
             event.preventDefault();
 
-            this._trainNameInput.attr("style", "");
-            this._destinationInput.attr("style", "");
-            this._firstTimeInput.attr("style", "");
-            this._frequencyInput.attr("style", "");
 
-            const trainName = this._trainNameInput.val().toString().trim();
-            const destination = this._destinationInput.val().toString().trim();
-            const firstTime = this._firstTimeInput.val().toString().trim();
-            const frequency = this._frequencyInput.val().toString().trim();
+            const jobTitle = this._jobTitleInput.val().toString().trim();
+            const location = this._jobLocationInput.val().toString().trim();
+            const radius = this._jobRadiusInput.val().toString().trim();
+            const salary = this._jobSalaryInput.val().toString().trim();
 
-            const wasSuccessful = this._model.addTrain(trainName, destination, firstTime, frequency);
+            const isInputValid = this.isInputValid(jobTitle, location, radius, salary);
 
-            if (wasSuccessful) {
+            if (isInputValid) {
+      
+                this.resetInputValidation();
 
-                this._trainNameInput.val("");
-                this._destinationInput.val("");
-                this._firstTimeInput.val("");
-                this._frequencyInput.val("");
+                this._jobTitleInput.val("");
+                this._jobLocationInput.val("");
+                this._jobRadiusInput.val("");
+                this._jobSalaryInput.val("");
 
-                this._schedule.row.add(this._model.getLastTrainJSON()).draw(false);
-            }
-            else {
+                this._model.getJobsFromAPI(jobTitle, location, radius, salary).then(() => {
 
-                if (trainName.length === 0 && destination.length === 0 && firstTime.length === 0 && frequency.length === 0) {
+                    const jobsJSON = this._model.getJobsJSONForTable();
 
-                    return;
-                }
-
-                if (Utility.isTrainNameInValid(trainName)) {
-
-                    this._trainNameInput.attr("style", "border: 2px solid red;");
-                }
-                else {
-
-                    this._trainNameInput.attr("style", "border: 2px solid green;");
-                }
-
-                if (Utility.isDestinationInValid(destination)) {
-
-                    this._destinationInput.attr("style", "border: 2px solid red;");
-                }
-                else {
-
-                    this._destinationInput.attr("style", "border: 2px solid green;");
-                }
-
-                if (Utility.isFirstTimeInValid(firstTime)) {
-
-                    this._firstTimeInput.attr("style", "border: 2px solid red;");
-                }
-                else {
-
-                    this._firstTimeInput.attr("style", "border: 2px solid green;");
-                }
-
-                if (Utility.isFrequencyInValid(frequency)) {
-
-                    this._frequencyInput.attr("style", "border: 2px solid red;");
-                }
-                else {
-
-                    this._frequencyInput.attr("style", "border: 2px solid green;");
-                }
+                    this._jobResults.clear().rows.add(jobsJSON).draw(false);
+                });
             }
         });
     }
 
-    updateSchedulePoll(pollFrequencyMS) {
+    resetInputValidation() {
+        
+        this._jobTitleInput.attr("style", "");
+        this._jobLocationInput.attr("style", "");
+        this._jobRadiusInput.attr("style", "");
+        this._jobSalaryInput.attr("style", "");
+    }
 
-        if (!this._isTablePollStarted) {
+    isInputValid(jobTitle, location, radius, salary) {
 
-            this._isTablePollStarted = true;
+        let isValid = true;
 
-            setInterval(() => {
+        if (jobTitle.length === 0 && location.length === 0 && radius.length === 0 && salary.length === 0) {
 
-                this._schedule.clear().rows.add(this._model.getTrainsJSON()).draw(false);
+            this.resetInputValidation();
 
-            }, pollFrequencyMS);
+            return false;
         }
+
+        if (Utility.isJobTitleInValid(jobTitle)) {
+
+            this._jobTitleInput.attr("style", "border: 2px solid red;");
+
+            isValid = false;
+        }
+        else {
+
+            this._jobTitleInput.attr("style", "border: 2px solid green;");
+        }
+
+        if (Utility.isLocationInValid(location)) {
+
+            this._jobLocationInput.attr("style", "border: 2px solid red;");
+
+            isValid = false;
+        }
+        else {
+
+            this._jobLocationInput.attr("style", "border: 2px solid green;");
+        }
+
+        if (Utility.isRadiusInValid(radius)) {
+
+            this._jobRadiusInput.attr("style", "border: 2px solid red;");
+
+            isValid = false;
+        }
+        else {
+
+            this._jobRadiusInput.attr("style", "border: 2px solid green;");
+        }
+
+        if (Utility.isSalaryInValid(salary)) {
+
+            this._jobSalaryInput.attr("style", "border: 2px solid red;");
+
+            isValid = false;
+        }
+        else {
+
+            this._jobSalaryInput.attr("style", "border: 2px solid green;");
+        }
+
+        return isValid;
     }
 
-    static removeTrain(key) {
 
-        var event = new CustomEvent("removeBtnClicked", {
 
-            detail: {
-                databaseKey: key
-            }
-        });
 
-        dispatchEvent(event);
-    }
+
+
+
+
+
+
+
+
+
+    // updateSchedulePoll(pollFrequencyMS) {
+
+    //     if (!this._isTablePollStarted) {
+
+    //         this._isTablePollStarted = true;
+
+    //         setInterval(() => {
+
+    //             // this._jobResults.clear().rows.add(this._model.getTrainsJSON()).draw(false);
+
+    //         }, pollFrequencyMS);
+    //     }
+    // }
+
+    // static removeTrain(key) {
+
+    //     var event = new CustomEvent("removeBtnClicked", {
+
+    //         detail: {
+    //             databaseKey: key
+    //         }
+    //     });
+
+    //     dispatchEvent(event);
+    // }
 }

@@ -1,212 +1,242 @@
 "use strict";
-/* global Utility, moment, firebase */
+/* global Utility */
 
 class Model {
 
     constructor() {
 
-        this._firebase = new FireBase();
+        this._joobleAPI = new JoobleAPI();
+        this._jobs = [];
     }
 
-    addTrain(name, dest, time, freq) {
+    getJobsFromAPI(keywords, location, radius, salary) {
 
-        let newTrain = new Train(name, dest, time, freq);
+        let promise = this._joobleAPI.sendRequestToAPI(keywords, location, radius, salary);
 
-        if (newTrain.isValid()) {
+        promise.then(() => {
 
-            this._firebase.addTrain(newTrain);
+            if (this._joobleAPI.isNewSearch()) {
 
-            return true;
+                this._jobs = [];
+            }
+
+            for (let apiJobOBJ of this._joobleAPI.getAPIResponseJobs()) {
+
+                this._jobs.push(new Job(apiJobOBJ));
+            }
+        });
+
+        return promise;
+    }
+
+    getJobsJSONForTable() {
+
+        let jobsJSON = [];
+
+        for (let job of this._jobs) {
+
+            jobsJSON.push(job.getJobJSON());
         }
 
-        return false;
-    }
-
-    getTrainsJSON() {
-
-        let trainsJSON = [];
-
-        for (let trainOBJ of this._firebase._trains) {
-
-            trainsJSON.push(trainOBJ.getTrainJSON());
-        }
-
-        return trainsJSON;
-    }
-
-    getLastTrainJSON() {
-
-        return this._firebase._trains[this._firebase._trains.length - 1].getTrainJSON();
+        return jobsJSON;
     }
 }
 
 
-class FireBase {
+class JoobleAPI {
 
     constructor() {
 
-        this._trains = [];
+        this._apiRoot = "https://us.jooble.org/api/";
+        this._apiKey = "90cb62a5-06c3-4da7-984e-5203f2c4e6cf";
 
-        const config = {
+        this._joobleJSONRequest = null;
+        this._page = 1;
+        this._isNewSearch = false;
 
-            apiKey: "AIzaSyA8ittWnw7U7K8a7Rgsgz7T3Owi6XCoqWw",
-            authDomain: "fir-test-ad074.firebaseapp.com",
-            databaseURL: "https://fir-test-ad074.firebaseio.com",
-            projectId: "fir-test-ad074",
-            storageBucket: "",
-            messagingSenderId: "371590315074",
-            appId: "1:371590315074:web:f50de714abe3392f"
+        this._apiResponse = null;
+        this._areJobsConsumed = false;
+    }
+
+    sendRequestToAPI(keywords, location, radius, salary) {
+
+        keywords = keywords.trim();
+        location = location.trim();
+        radius = radius.trim();
+        salary = salary.trim();
+
+        this._isNewSearch = false;
+
+        if (this._joobleJSONRequest === null) {
+
+            this._joobleJSONRequest = new JoobleJSONRequest(keywords, location, radius, salary);
+
+            this._isNewSearch = true;
+        }
+        else if (!this._joobleJSONRequest.isSameRequest(keywords, location, radius, salary)) {
+
+            this._joobleJSONRequest = new JoobleJSONRequest(keywords, location, radius, salary);
+
+            this._isNewSearch = true;
+
+            this._page = 1;
+        }
+        else {
+
+            this._page++;
+        }
+
+        const connection =
+        {
+            url: this._apiRoot + this._apiKey,
+            method: "POST",
+            data: this._joobleJSONRequest.getJSONRequestOBJ(this._page)
         };
 
-        this._databaseName = "/TrainScheduler";
+        this._areJobsConsumed = false;
 
-        // @ts-ignore
-        this._database = firebase.initializeApp(config).database();
+        $.ajax(connection).then((response) => {
 
-        this.syncWithDatabase();
+            this._apiResponse = response;
 
-        addEventListener("removeBtnClicked", (event) => {
+            if (this._apiResponse.jobs.length < 20) {
 
-            // @ts-ignore
-            this.removeTrain(event.detail.databaseKey);
-        });
-    }
-
-    addTrain(newTrain) {
-
-        this._database.ref(this._databaseName).push(
-            {
-                trainName: newTrain._trainName,
-                destination: newTrain._destination,
-                firstTime: newTrain._firstTime,
-                frequency: newTrain._frequency
+                this._page = 1;
             }
-        );
-    }
 
-    removeTrain(key) {
+            this._areJobsConsumed = true;
 
-        this._database.ref(this._databaseName).child(key).remove();
+        }).catch(() => {
 
-        this._trains = this._trains.filter(train => train._databaseKey !== key);
-    }
-
-    syncWithDatabase() {
-
-        this._database.ref(this._databaseName).on("child_added", (snapshot) => {
-
-            const newTrainJSON = snapshot.val();
-     
-            let newTrain = new Train(newTrainJSON.trainName, newTrainJSON.destination, newTrainJSON.firstTime, newTrainJSON.frequency);
-
-            newTrain.setDatabaseKey(snapshot.key);
-
-            this._trains.push(newTrain);
-
-        }, (errorObject) => {
-
-            alert("The read failed: " + errorObject.code);
-            throw new Error("The read failed: " + errorObject.code);
+            alert("Class:JoobleAPI:getJobsFromAPI Jooble API did not respond correctly");
+            throw new Error("Class:JoobleAPI:getJobsFromAPI Jooble API did not respond correctly");
         });
+
+        return Utility.createPromise(() => this._areJobsConsumed === true);
+    }
+
+    isNewSearch() {
+
+        return this._isNewSearch;
+    }
+
+    getAPIResponseJobs() {
+
+        return this._apiResponse.jobs;
     }
 }
 
 
-class Train {
+class JoobleJSONRequest {
 
-    constructor(name, dest, time, freq) {
+    constructor(keywords, location, radius, salary) {
 
-        this._trainName = name;
-        this._destination = dest;
-        this._firstTime = time;
-        this._frequency = freq;
-
-        this._databaseKey = null;
-
-        this._isValid = false;
-
-        this.validate();
+        this._keywords = keywords;
+        this._location = location;
+        this._radius = radius;
+        this._salary = salary;
     }
 
-    validate() {
+    isSameRequest(keywords, location, radius, salary) {
 
-        this._isValid = false;
+        if (this._keywords !== keywords) { return false; }
 
-        if (Utility.isTrainNameInValid(this._trainName)) {
+        if (this._location !== location) { return false; }
 
-            return;
-        }
+        if (this._radius !== radius) { return false; }
 
-        if (Utility.isDestinationInValid(this._destination)) {
+        if (this._salary !== salary) { return false; }
 
-            return;
-        }
-
-        if (Utility.isFirstTimeInValid(this._firstTime)) {
-
-            return;
-        }
-
-        if (Utility.isFrequencyInValid(this._frequency)) {
-
-            return;
-        }
-
-        //parse it as an Integer now (passed validation already)
-        this._frequency = parseInt(this._frequency);
-
-        this._isValid = true;
+        return true;
     }
 
-    isValid() {
+    getJSONRequestOBJ(pageNumber) {
 
-        return this._isValid;
+        if (pageNumber < 1) {
+
+            alert("Class:JoobleJSONRequest:getJSONRequest page number supplied < 1");
+            throw new Error("Class:JoobleJSONRequest:getJSONRequest page number supplied < 1");
+        }
+
+        const request = JSON.stringify(
+            {
+                keywords: this._keywords,
+                location: this._location,
+                radius: this._radius,
+                salary: this._salary,
+                page: pageNumber
+            }
+        );
+
+        return request;
+    }
+}
+
+
+class Job {
+
+    constructor(apiJobOBJ) {
+
+        this._company = apiJobOBJ.company;
+        this._link = apiJobOBJ.link;
+        this._location = apiJobOBJ.location;
+        this._salary = apiJobOBJ.salary;
+        this._snippet = apiJobOBJ.snippet;
+        this._source = apiJobOBJ.source;
+        this._title = apiJobOBJ.title;
+        this._type = apiJobOBJ.type;
+        this._updated = apiJobOBJ.updated;
+
+        this.setEmptyResults();
     }
 
-    setDatabaseKey(key) {
+    setEmptyResults() {
 
-        if (this._databaseKey === null) {
-
-            this._databaseKey = key.toString();
+        if (typeof this._company === 'undefined' || this._company.length === 0) { 
+            this._company = "---"; 
+        }
+        if (typeof this._link === 'undefined' || this._link.length === 0) {
+            this._link = "---"; 
+        }
+        if (typeof this._location === 'undefined' || this._location.length === 0) { 
+            this._location = "---"; 
+        }
+        if (typeof this._salary === 'undefined' || this._salary.length === 0) { 
+            this._salary = "---"; 
+        }
+        if (typeof this._snippet === 'undefined' || this._snippet.length === 0) {
+            this._snippet = "---"; 
+        }
+        if (typeof this._source === 'undefined' || this._source.length === 0) { 
+            this._source = "---"; 
+        }
+        if (typeof this._title === 'undefined' || this._title.length === 0) { 
+            this._title = "---"; 
+        }
+        if (typeof this._type === 'undefined' || this._type.length === 0) { 
+            this._type = "---"; 
+        }
+        if (typeof this._updated === 'undefined' || this._updated.length === 0) { 
+            this._updated = "---"; 
         }
     }
 
-    getTrainJSON() {
+    getJobJSON() {
 
-        let train = [];
+        let jobJSON = [];
 
-        const frequencyMS = this._frequency * 60 * 1000;
+        const applyHereBTN = '<button class=\"applyBTN\" onclick=\"window.open(\'' + this._link + '\',\'_blank\')\">Apply Here</button>';
 
-        // First Time (pushed back 1 year to make sure it comes before current time)
-        // @ts-ignore
-        const firstTimeConvertedMS = moment(this._firstTime, "HH:mm").subtract(1, "years");
+        jobJSON.push(this._title);
+        jobJSON.push(this._location);
+        jobJSON.push(this._company);
+        jobJSON.push(this._salary);
+        jobJSON.push(this._type);
+        jobJSON.push(this._source);
+        jobJSON.push(this._snippet);
+        jobJSON.push(this._updated);
+        jobJSON.push(applyHereBTN);
 
-        // Difference between current time and firstTime (set back a year)
-        // @ts-ignore
-        const diffTimeMS = moment().diff(moment(firstTimeConvertedMS), "milliseconds");
-
-        // Time apart (remainder)
-        const timeRemainderMS = diffTimeMS % frequencyMS;
-
-        const timeToArrivalMS = frequencyMS - timeRemainderMS;
-        // @ts-ignore
-        const nextArrivalMS = moment().add(timeToArrivalMS, "milliseconds");
-        // @ts-ignore
-        const nextArrivalFormatted = moment(nextArrivalMS).format("hh:mm a");
-        // @ts-ignore
-        const timeToArrivalFormatted = moment.utc(timeToArrivalMS).format("HH:mm:ss");
-
-        const databaseKeyString = "\'" + this._databaseKey + "\'";
-
-        const removeBtn = '<button class="removeBTN" onclick="ViewController.removeTrain(' + databaseKeyString + ');">Remove</button>';
-
-        train.push(this._trainName);
-        train.push(this._destination);
-        train.push(this._frequency);
-        train.push(nextArrivalFormatted);
-        train.push(timeToArrivalFormatted);
-        train.push(removeBtn);
-
-        return train;
+        return jobJSON;
     }
 }

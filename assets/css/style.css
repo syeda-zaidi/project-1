@@ -24,23 +24,23 @@ body, html {
     width: 100%;
 }
 
-#scheduleTBLWrapper {
+#jobResultsTBLWrapper {
     margin: 50px auto 0px auto;
-    width: 80%;
+    width: 95%;
 }
 
-#schedule {
+#jobResults {
     font-size: 18pt;
     position: relative;
     text-align: center;
     top: 30px;
 }
 
-#scheduleTBL_length, #scheduleTBL_filter {
+#jobResultsTBL_length, #jobResultsTBL_filter {
     color: rgb(240,240,240);
 }
 
-#scheduleTBL_length select, #scheduleTBL_filter input {
+#jobResultsTBL_length select, #jobResultsTBL_filter input {
     background: rgb(32, 32, 32);
     border: 3px solid rgba(240,240,240,1.0);
     border-radius: 10px;
@@ -53,38 +53,38 @@ body, html {
     width: 225px;
 }
 
-#scheduleTBL_length select {
+#jobResultsTBL_length select {
     margin-left: 10px;
     padding-left: 0px;
     width: 55px;
 }
 
-#scheduleTBL {
+#jobResultsTBL {
     border-radius: 5px;
     border: 3px solid rgb(240,240,240);
     position: relative;
     top: 20px;
 }
 
-#scheduleTBL thead {
+#jobResultsTBL thead {
     background: rgb(64,64,64);
     width: 100%;
 }
 
-#scheduleTBL .odd {
+#jobResultsTBL .odd {
     background: rgb(32, 32, 32);
 }
 
-#scheduleTBL .even {
+#jobResultsTBL .even {
     background: rgb(40, 40, 40);
 }
 
-#scheduleTBL_paginate {
+#jobResultsTBL_paginate {
     position: relative;
     top: 40px;
 }
 
-#scheduleTBL_paginate a {
+#jobResultsTBL_paginate a {
     border-radius: 5px;
     border: 2px solid rgb(240,240,240);
     font-family: 'Roboto', sans-serif;
@@ -92,14 +92,14 @@ body, html {
     font-weight: 700;
 }
 
-#addTrain {
-    font-size: 17pt;
+#searchJobs {
+    font-size: 18pt;
     position: relative;
     text-align: center;
     top: 72px;
 }
 
-#addTrainForm {
+#searchJobsForm {
     background: rgb(64,64,64);
     border: 3px solid rgba(240,240,240,1.0);
     border-radius: 10px;
@@ -108,7 +108,7 @@ body, html {
     min-width: 310px;
 }
 
-#trainNameInput, #destinationInput, #firstTimeInput, #frequencyInput {
+#jobTitleInput, #jobLocationInput, #jobRadiusInput, #jobSalaryInput {
     background: rgb(18, 18, 18);
     border: 2px solid rgb(240,240,240);
     border-radius: 5px;
@@ -123,13 +123,13 @@ body, html {
     width: 90%;
 }
 
-#addTrainSubmitBox {
+#searchJobsSubmitBox {
     height: 36px;
     margin: 30px auto 30px auto;
     width: 90%;
 }
 
-#addTrainSubmitBtn, .removeBTN {
+#searchJobsSubmitBtn, .applyBTN {
     background: rgb(18, 18, 18);
     border: 2px solid rgba(240,240,240,0.75);
     border-radius: 10px;
@@ -138,10 +138,18 @@ body, html {
     padding: 9px 10px 8px 10px;
 }
 
-#addTrainSubmitBtn:hover, .removeBTN:hover {
+#searchJobsSubmitBtn:hover, .applyBTN:hover {
     border: 2px solid rgba(255,255,255,1.0);
     color: rgba(255,255,255,1.0);
+}
 
+
+
+
+
+
+
+/* Syeda's CSS */
 .jobsDiv {
     padding: 20px;
     margin: 10px;

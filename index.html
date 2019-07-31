@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>Job Search Advancement v1.0</title>
+    <title>Search Job Advancement v1.0</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="./assets/images/favicon.ico">
     <link rel="prefetch" href="https://fonts.googleapis.com/css?family=Roboto&display=swap" as="style">
@@ -14,56 +14,34 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
     <link rel="stylesheet" href="./assets/css/reset.css" type="text/css">
-    <link rel="stylesheet" href="./assets/css/datatables.css">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" type="text/css"> -->
+    <link rel="stylesheet" href="./assets/css/datatables.css" type="text/css">
     <link rel="stylesheet" href="./assets/css/style.css" type="text/css">
-    <link rel="stylesheet" href="./assets/css/reset.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="./assets/css/style.css">
 
 </head>
 
 <body>
 
-    <div id="title">Job Search Advancement</div>
+    <div id="title">Search Job Advancement</div>
 
-    <div id="scheduleTBLWrapper">
-        <div id="schedule">Schedule</div>
-        <table id="scheduleTBL" class="cell-border hover"></table>
+    <div id="jobResultsTBLWrapper">
+        <div id="jobResults">Job Results</div>
+        <table id="jobResultsTBL" class="cell-border hover"></table>
     </div>
 
-    <div id="addTrain">Add Train</div>
+    <div id="searchJobs">Search Jobs</div>
 
-    <form id="addTrainForm">
-        <input id="trainNameInput" class="form-control" type="text" placeholder="Train Name">
-        <input id="destinationInput" class="form-control" type="text" placeholder="Destination">
-        <input id="firstTimeInput" class="form-control" type="text" placeholder="First Train Time (HH:mm - military time)">
-        <input id="frequencyInput" class="form-control" type="text" placeholder="Frequency (min)">
-        <div id="addTrainSubmitBox">
-            <button id="addTrainSubmitBtn" type="submit">Submit</button>
+    <form id="searchJobsForm">
+        <input id="jobTitleInput" class="form-control" type="text" placeholder="Job Title">
+        <input id="jobLocationInput" class="form-control" type="text" placeholder="Location">
+        <input id="jobRadiusInput" class="form-control" type="text" placeholder="Radius (miles 5, 10, 15, 25, 50)">
+        <input id="jobSalaryInput" class="form-control" type="text" placeholder="Salary ($33,500 - $200,000)">
+        <div id="searchJobsSubmitBox">
+            <button id="searchJobsSubmitBtn" type="submit">Submit</button>
         </div>
-    </form> 
+    </form>
 
-    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
-    <script src="./assets/javascript/datatables.js"></script>
-    <script src="./assets/javascript/moment.js"></script>
-    <script src="./assets/javascript/Utility.js"></script>
-    <script src="./assets/javascript/Model.js"></script>
-    <script src="./assets/javascript/ViewController.js"></script>
-    <script src="./assets/javascript/TrainScheduler.js"></script>
-
-    <script>
-        $(document).ready(() => {
-
-            let launcher = new TrainScheduler();
-
-            launcher.startProgram();
-        });
-    </script>
-
-    <div class="jumbotron">
+    <!-- <div class="jumbotron">
         <h1 class="text-center">Search Job Advancement</h1> <br>
         <form style="width: 30%">
             <div class="form-group">
@@ -74,24 +52,29 @@
                 <label for="location-input">Location</label>
                 <input type="text" class="form-control" id="location-input" placeholder="Enter location">
             </div>
-
             <button id="search-btn" type="button" class="btn btn-primary">Search</button>
         </form>
-
     </div>
-    
-    
+
     <div class="container">
-        
-            <div id="results-display">
+        <div id="results-display"></div>
+    </div> -->
 
-            </div>
-    
-    </div>
-    
+    <script src="./assets/javascript/datatables.js"></script>
+    <script src="./assets/javascript/Utility.js"></script>
+    <script src="./assets/javascript/Model.js"></script>
+    <script src="./assets/javascript/ViewController.js"></script>
+    <script src="./assets/javascript/App.js"></script>
 
+    <script>
+        $(document).ready(() => {
 
-    
+            let launcher = new App();
+
+            launcher.startApp();
+        });
+    </script>
+
 </body>
 
 </html>

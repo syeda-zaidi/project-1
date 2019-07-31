@@ -20,19 +20,9 @@ class Utility {
         return new Promise(poll);
     }
 
-    static isTrainNameInValid(trainName) {
+    static isJobTitleInValid(jobTitle) {
 
-        if (trainName.length === 0) {
-
-            return true;
-        }
-        
-        return false;
-    }
-
-    static isDestinationInValid(destination) {
-
-        if (destination.length === 0) {
+        if (jobTitle.length < 3) {
 
             return true;
         }
@@ -40,34 +30,66 @@ class Utility {
         return false;
     }
 
-    static isFirstTimeInValid(firstTime) {
+    static isLocationInValid(location) {
 
-         // @ts-ignore
-         const isTimeValid = moment(firstTime, "HH:mm", true).isValid();
+        if (location.length < 3) {
 
-         if (!isTimeValid) {
- 
-             return true;
-         }
-
-         return false;
+            return true;
+        }
+        
+        return false;
     }
 
-    static isFrequencyInValid(frequency) {
+    static isRadiusInValid(radius) {
 
         //check if all characters are numbers as parseInt() will generate a number if the first charaters in a string are numbers (even if followed with letters)
-        if (isNaN(frequency)) {  
+        if (isNaN(radius)) {  
 
             return true;
         }
 
         //parse it as an Integer now
-        frequency = parseInt(frequency);
+        radius = parseInt(radius);
 
-        const isFreqNumber = typeof frequency === 'number';
+        const isRadiusNumber = typeof radius === 'number';
 
-        //Check on 1440 minutes is because this is over a day, so gives confusing results
-        if (!isFreqNumber || isNaN(frequency) || frequency <= 0 || frequency > 1440) {
+        if (!isRadiusNumber || isNaN(radius)) {
+
+            return true;
+        }
+
+        const acceptableRadius = [ 5, 10, 15, 25, 50 ];
+
+        if (!acceptableRadius.includes(radius)) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    static isSalaryInValid(salary) {
+
+        //check if all characters are numbers as parseInt() will generate a number if the first charaters in a string are numbers (even if followed with letters)
+        if (isNaN(salary)) {  
+
+            return true;
+        }
+
+        //parse it as an Integer now
+        salary = parseInt(salary);
+
+        const isSalaryNumber = typeof salary === 'number';
+
+        if (!isSalaryNumber || isNaN(salary)) {
+
+            return true;
+        }
+
+        const acceptableSalaryMin = 33500;
+        const acceptableSalaryMax = 200000;
+
+        if (salary < acceptableSalaryMin || salary > acceptableSalaryMax) {
 
             return true;
         }
