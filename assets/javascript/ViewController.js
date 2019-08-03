@@ -33,9 +33,6 @@ class ViewController {
         this._jobSalaryInput = $("#jobSalaryInput");
         this._searchJobsSubmitBtn = $("#searchJobsSubmitBtn");
 
-        this._tablePollFrequencyMS = 1000;
-        this._isTablePollStarted = false;
-
         this.assignInputListeners();
 
         this.assignUpdateTableListener();
@@ -179,42 +176,4 @@ class ViewController {
 
         return isValid;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // updateSchedulePoll(pollFrequencyMS) {
-
-    //     if (!this._isTablePollStarted) {
-
-    //         this._isTablePollStarted = true;
-
-    //         setInterval(() => {
-
-    //             // this._jobResults.clear().rows.add(this._model.getTrainsJSON()).draw(false);
-
-    //         }, pollFrequencyMS);
-    //     }
-    // }
-
-    // static removeTrain(key) {
-
-    //     var event = new CustomEvent("removeBtnClicked", {
-
-    //         detail: {
-    //             databaseKey: key
-    //         }
-    //     });
-
-    //     dispatchEvent(event);
-    // }
 }
