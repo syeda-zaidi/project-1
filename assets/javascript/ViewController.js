@@ -91,7 +91,7 @@ class ViewController {
 
             if (location.length === 0) {
 
-                // this._jobLocationInput.attr("style", "");
+                this._jobLocationInput.attr("style", "");
             }
             else if (Utility.isLocationInValid(location)) {
 
