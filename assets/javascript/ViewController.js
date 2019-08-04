@@ -7,6 +7,22 @@ class ViewController {
 
         this._model = new Model();
 
+        this._header = $("#header");
+
+        this._jobTitleInput = $("#jobTitleInput");
+        this._jobLocationInput = $("#jobLocationInput");
+        this._jobLocationIcon = $("#locationIcon");
+        this._jobRadiusInput = $("#jobRadiusInput");
+        this._jobSalaryInput = $("#jobSalaryInput");
+
+        this._searchIcon = $("#searchIcon");
+        this._searchJobsSubmitBtn = $("#searchJobsSubmitBtn");
+
+        this._jobTitleValue = null;
+        this._locationValue = null;
+        this._radiusValue = null;
+        this._salaryValue = null;
+
         this._jobResultsTBL = $("#jobResultsTBL");
 
         // @ts-ignore
@@ -27,15 +43,13 @@ class ViewController {
             ]
         });
 
-        this._jobTitleInput = $("#jobTitleInput");
-        this._jobLocationInput = $("#jobLocationInput");
-        this._jobRadiusInput = $("#jobRadiusInput");
-        this._jobSalaryInput = $("#jobSalaryInput");
-        this._searchJobsSubmitBtn = $("#searchJobsSubmitBtn");
+        this._isStartCompleted = false;
 
         this.assignInputListeners();
 
         this.assignUpdateTableListener();
+
+        this.assignZipCodeListeners();
     }
 
     assignInputListeners() {
@@ -44,60 +58,99 @@ class ViewController {
 
             event.preventDefault();
 
-            const jobTitle = this._jobTitleInput.val().toString().trim();
-            const location = this._jobLocationInput.val().toString().trim();
-            const radius = this._jobRadiusInput.val().toString().trim();
-            const salary = this._jobSalaryInput.val().toString().trim();
+            if (this.isAllInputValid()) {
 
-            const isInputValid = this.isInputValid(jobTitle, location, radius, salary);
+                // this.resetInputValidation();
 
-            if (isInputValid) {
+                this._model.getJobsFromAPI(this._jobTitleValue, this._locationValue, this._radiusValue, this._salaryValue);
 
-                this.resetInputValidation();
+                if (!this._isStartCompleted) {
 
-                this._jobTitleInput.val("");
-                this._jobLocationInput.val("");
-                this._jobRadiusInput.val("");
-                this._jobSalaryInput.val("");
+                    this._header.animate({ top: '0%' }, 1500);
 
-                this._model.getJobsFromAPI(jobTitle, location, radius, salary);
+                    this._isStartCompleted = true;
+                }
             }
         });
 
         this._jobTitleInput.keyup(() => {
 
-            const jobTitle = this._jobTitleInput.val().toString().trim();
+            this.gatherAllInputValues();
 
-            if (jobTitle.length === 0) {
+            if (this._jobTitleValue.length === 0) {
 
-                this._jobTitleInput.attr("style", "");
+                this.removeValidationStyle(this._jobTitleInput);
             }
-            else if (Utility.isJobTitleInValid(jobTitle)) {
+            else if (Utility.isJobTitleInValid(this._jobTitleValue)) {
 
-                this._jobTitleInput.attr("style", "border: 2px solid rgba(251,103,105,1.0);");
+                this.markAsInValidStyle(this._jobTitleInput);
             }
             else {
-    
-                this._jobTitleInput.attr("style", "border: 2px solid rgba(42,252,156,1.0);");
+
+                this.markAsValidStyle(this._jobTitleInput);
             }
+
+            this.isAllInputValid();
         });
 
         this._jobLocationInput.keyup(() => {
 
-            const location = this._jobLocationInput.val().toString().trim();
+            this.gatherAllInputValues();
 
-            if (location.length === 0) {
+            if (this._locationValue.length === 0) {
 
-                this._jobLocationInput.attr("style", "");
+                this.removeValidationStyle(this._jobLocationInput);
             }
-            else if (Utility.isLocationInValid(location)) {
+            else if (Utility.isLocationInValid(this._locationValue)) {
 
-                this._jobLocationInput.attr("style", "border: 2px solid rgba(251,103,105,1.0);");
+                this.markAsInValidStyle(this._jobLocationInput);
             }
             else {
-    
-                this._jobLocationInput.attr("style", "border: 2px solid rgba(42,252,156,1.0);");
+
+                this.markAsValidStyle(this._jobLocationInput);
             }
+
+            this.isAllInputValid();
+        });
+
+        this._jobRadiusInput.keyup(() => {
+
+            this.gatherAllInputValues();
+
+            if (this._radiusValue.length === 0) {
+
+                this.removeValidationStyle(this._jobRadiusInput);
+            }
+            else if (Utility.isRadiusInValid(this._radiusValue)) {
+
+                this.markAsInValidStyle(this._jobRadiusInput);
+            }
+            else {
+
+                this.markAsValidStyle(this._jobRadiusInput);
+            }
+
+            this.isAllInputValid();
+        });
+
+        this._jobSalaryInput.keyup(() => {
+
+            this.gatherAllInputValues();
+
+            if (this._salaryValue.length === 0) {
+
+                this.removeValidationStyle(this._jobSalaryInput);
+            }
+            else if (Utility.isSalaryInValid(this._salaryValue)) {
+
+                this.markAsInValidStyle(this._jobSalaryInput);
+            }
+            else {
+
+                this.markAsValidStyle(this._jobSalaryInput);
+            }
+
+            this.isAllInputValid();
         });
     }
 
@@ -111,69 +164,157 @@ class ViewController {
         });
     }
 
-    resetInputValidation() {
+    assignZipCodeListeners() {
 
-        this._jobTitleInput.attr("style", "");
-        this._jobLocationInput.attr("style", "");
-        this._jobRadiusInput.attr("style", "");
-        this._jobSalaryInput.attr("style", "");
+        this._jobLocationIcon.mouseenter(() => {
+
+            this.showActiveLocationIcon();
+        });
+
+        this._jobLocationIcon.mouseleave(() => {
+
+            this.showInActiveLocationIcon();
+        });
+
+        this._jobLocationIcon.click(() => {
+
+            this._model.setZipCode();
+        });
+
+        addEventListener("zipCodeReady", () => {
+
+            const zipCode = this._model.getZipCode().toString();
+
+            this._jobLocationInput.val(zipCode);
+
+            this.isAllInputValid();
+        });
     }
 
-    isInputValid(jobTitle, location, radius, salary) {
+    gatherAllInputValues() {
+
+        this._jobTitleValue = this._jobTitleInput.val().toString().trim();
+        this._locationValue = this._jobLocationInput.val().toString().trim();
+        this._radiusValue = this._jobRadiusInput.val().toString().trim();
+        this._salaryValue = this._jobSalaryInput.val().toString().trim();
+    }
+
+    resetInputValidation() {
+
+        this.removeValidationStyle(this._jobTitleInput);
+        this.removeValidationStyle(this._jobLocationInput);
+        this.removeValidationStyle(this._jobRadiusInput);
+        this.removeValidationStyle(this._jobSalaryInput);
+
+        // this._jobTitleInput.val("");
+        // this._jobLocationInput.val("");
+        // this._jobRadiusInput.val("");
+        // this._jobSalaryInput.val("");
+
+        this.showInActiveSearchIcon();
+    }
+
+    isAllInputValid() {
+
+        this.gatherAllInputValues();
 
         let isValid = true;
 
-        if (jobTitle.length === 0 && location.length === 0 && radius.length === 0 && salary.length === 0) {
+        if (this._jobTitleValue.length === 0 && this._locationValue.length === 0) { //&& this._radiusValue.length === 0 && this._salaryValue.length === 0) {
 
             this.resetInputValidation();
 
             return false;
         }
 
-        if (Utility.isJobTitleInValid(jobTitle)) {
+        if (Utility.isJobTitleInValid(this._jobTitleValue)) {
 
-            this._jobTitleInput.attr("style", "border: 2px solid rgba(251,103,105,1.0);");
-
-            isValid = false;
-        }
-        else {
-
-            this._jobTitleInput.attr("style", "border: 2px solid rgba(42,252,156,1.0);");
-        }
-
-        if (Utility.isLocationInValid(location)) {
-
-            this._jobLocationInput.attr("style", "border: 2px solid rgba(251,103,105,1.0);");
+            this.markAsInValidStyle(this._jobTitleInput);
 
             isValid = false;
         }
         else {
 
-            this._jobLocationInput.attr("style", "border: 2px solid rgba(42,252,156,1.0);");
+            this.markAsValidStyle(this._jobTitleInput);
         }
 
-        if (Utility.isRadiusInValid(radius)) {
+        if (Utility.isLocationInValid(this._locationValue)) {
 
-            this._jobRadiusInput.attr("style", "border: 2px solid rgba(251,103,105,1.0);");
+            this.markAsInValidStyle(this._jobLocationInput);
 
             isValid = false;
         }
         else {
 
-            this._jobRadiusInput.attr("style", "border: 2px solid rgba(42,252,156,1.0);");
+            this.markAsValidStyle(this._jobLocationInput);
         }
 
-        if (Utility.isSalaryInValid(salary)) {
+        if (Utility.isRadiusInValid(this._radiusValue)) {
 
-            this._jobSalaryInput.attr("style", "border: 2px solid rgba(251,103,105,1.0);");
+            this.markAsInValidStyle(this._jobRadiusInput);
 
             isValid = false;
         }
         else {
 
-            this._jobSalaryInput.attr("style", "border: 2px solid rgba(42,252,156,1.0);");
+            this.markAsValidStyle(this._jobRadiusInput);
+        }
+
+        if (Utility.isSalaryInValid(this._salaryValue)) {
+
+            this.markAsInValidStyle(this._jobSalaryInput);
+
+            isValid = false;
+        }
+        else {
+
+            this.markAsValidStyle(this._jobSalaryInput);
+        }
+
+        if (isValid) {
+
+            this.showActiveSearchIcon();
+        }
+        else {
+
+            this.showInActiveSearchIcon();
         }
 
         return isValid;
+    }
+
+    showActiveLocationIcon() {
+
+        this._jobLocationIcon.attr("src", "./assets/images/locationIcon_Active.png");
+    }
+
+    showInActiveLocationIcon() {
+
+        this._jobLocationIcon.attr("src", "./assets/images/locationIcon_Inactive.png");
+    }
+
+    showActiveSearchIcon() {
+
+        this._searchIcon.attr("src", "./assets/images/searchIcon_Active.png");
+    }
+
+    showInActiveSearchIcon() {
+
+        this._searchIcon.attr("src", "./assets/images/searchIcon_Inactive.png");
+    }
+
+    removeValidationStyle(element) {
+
+        element.attr("style", "");
+    }
+
+    markAsValidStyle(element) {
+
+        element.attr("style", "border: 2px solid rgba(42,252,156,1.0);");
+    }
+
+    markAsInValidStyle(element) {
+
+        element.attr("style", "border: 2px solid rgba(251,103,105,1.0);");
     }
 }
