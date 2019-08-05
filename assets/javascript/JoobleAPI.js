@@ -68,7 +68,7 @@ class JoobleAPI {
 
         }).catch(() => {
 
-            alert("Class:JoobleAPI:getJobsFromAPI Jooble API did not respond correctly");
+            // alert("Class:JoobleAPI:getJobsFromAPI Jooble API did not respond correctly");
 
             //Use offloaded jobs JSON data instead for presentation purposes. Jooble's API has had inconsistent uptime. Oh well...
             // @ts-ignore

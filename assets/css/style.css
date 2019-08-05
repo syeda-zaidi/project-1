@@ -68,6 +68,7 @@ body {
     height: 36px;
     margin-right: 10px;
     outline: none;
+    text-decoration: none;
 }
 
 #jobTitleInput, #jobLocationInput {
@@ -118,21 +119,6 @@ body {
     margin: 0 auto;
     width: 125px;
 }
-
-
-
-
-
-
-
-/* Needs Colors to be checked below (Table design will have colors from our palette... on the to-do list) */
-
-
-
-
-
-
-
 
 #jobResultsTBLWrapper {
     margin: 150px auto 150px auto;
@@ -217,9 +203,27 @@ body {
     border: 2px solid rgba(42,252,156,1.0);
 }
 
+#jobsCarouselContainer {
+    margin: 150px 0px 150px 0px;
+    padding: 0;
+    width: 100%;
+}
+
+#carousel-inner {
+    margin: 0 auto;
+    width: 95%;
+}
+
+.carousel-item {
+    background: rgba(48,48,48,1.0);
+    border-radius: 5px;
+    border: 3px solid rgba(248,248,248,1.0);
+    height: 500px;
+    width: 100%;
+}
+
 .carousel-caption {
-    top: 0;
-    bottom: auto;
-    margin-top: 60px;
-    color: whitesmoke;
+    color: rgba(248,248,248,1.0);
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 20px;
  }

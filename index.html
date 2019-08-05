@@ -6,13 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>TechIn v1.0</title>
+    <title>TechIn v1.1</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="./assets/images/favicon.ico">
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" type="text/javascript"></script>
     <script src="https://js.api.here.com/v3/3.0/mapsjs-core.js" type="text/javascript"></script>
     <script src="https://js.api.here.com/v3/3.0/mapsjs-service.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <link rel="stylesheet" href="./assets/css/reset.css" type="text/css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" type="text/css">
@@ -61,31 +63,29 @@
         <img id="loadingIcon" src="./assets/images/loading.gif">
     </div>
 
-    <div id="jobResultsTBLWrapper" style="opacity: 0.0;">
+    <div id="jobResultsTBLWrapper" style="display: none;">
         <div id="jobResults">Job Results</div>
         <table id="jobResultsTBL" class="cell-border hover"></table>
     </div>
 
-    <div class="container" style="opacity: 0.0;">
+    <div id="jobsCarouselContainer" class="container-fluid" style="display: none;">
         <div class="row">
-            <div class="col-md-12">
-                <div class="bd-example">
-                    <div id="jobs-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
-                        <!-- wrapper for indicators -->
-                        <ol class="carousel-indicators"></ol>
-                        <!-- wrapper for slides -->
-                        <div id="carousel-inner" class="carousel-inner"></div>
-                    </div>
-                    <!-- controls -->
-                    <a class="carousel-control-prev" href="#jobs-carousel" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#jobs-carousel" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
+            <div class="col-12">
+                <div id="jobs-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                    <!-- wrapper for indicators -->
+                    <ol id="carousel-indicators" class="carousel-indicators"></ol>
+                    <!-- wrapper for slides -->
+                    <div id="carousel-inner" class="carousel-inner"></div>
                 </div>
+                <!-- controls -->
+                <a class="carousel-control-prev" href="#jobs-carousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#jobs-carousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
             </div>
         </div>
     </div>
