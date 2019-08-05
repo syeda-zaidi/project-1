@@ -18,6 +18,13 @@ class Model {
 
         promise.then(() => {
 
+            if (this._joobleAPI._isLastPageReached) {
+
+                dispatchEvent(new CustomEvent("updateTable"));
+
+                return;
+            }
+
             if (this._joobleAPI.isNewSearch()) {
 
                 this._jobs = [];
@@ -43,6 +50,18 @@ class Model {
 
         return jobsJSON;
     }
+
+    // getAllJobsForCarousel() {
+
+    //     let carouselItems = [];
+
+    //     for (let job of this._jobs) {
+
+    //         carouselItems.push(job.getJobCarouselItem());
+    //     }
+
+    //     return carouselItems;
+    // }
 
     setZipCode() {
 
@@ -108,18 +127,22 @@ class Job {
 
         let jobJSON = [];
 
-        const applyHereBTN = '<button class=\"applyBTN\" onclick=\"window.open(\'' + this._link + '\',\'_blank\')\">Apply Here</button>';
+        const applyHereBTN = '<button id=\"applyBTN\" onclick=\"window.open(\'' + this._link + '\',\'_blank\')\">Apply</button>';
 
-        jobJSON.push(this._title);
+        const title = $("<span>").text(this._title).attr("style", "color: rgba(0,174,239,1.0);");
+
+        jobJSON.push(title[0].outerHTML);
         jobJSON.push(this._location);
         jobJSON.push(this._company);
         jobJSON.push(this._salary);
-        jobJSON.push(this._type);
-        jobJSON.push(this._source);
-        jobJSON.push(this._snippet);
-        jobJSON.push(this._updated);
-        jobJSON.push(applyHereBTN);
+        // jobJSON.push(this._type);
+        // jobJSON.push(this._source);
+        // jobJSON.push(this._snippet);
+        jobJSON.push(this._updated.substring(0, 10));  //Date only, remove time
+        jobJSON.push(applyHereBTN + "<br>" + this._source);
 
         return jobJSON;
     }
+
+
 }
